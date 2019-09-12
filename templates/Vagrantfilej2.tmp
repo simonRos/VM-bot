@@ -1,0 +1,35 @@
+load './vagrant_global.rb'
+Vagrant.configure("2") do |config|
+  config.vm.define "{{ id }}" do |oscar_config|
+    OSCAR_VAGRANT_INSTANCE_NAME = "{{ hostname }}"
+    oscar_config.vm.box     = CONFIG_BOX
+    oscar_config.vm.box_url = CONFIG_BOX_URL
+    oscar_config.vm.hostname = OSCAR_VAGRANT_INSTANCE_NAME
+    oscar_config.vm.network 'private_network', ip: '{{ ip }}'
+    oscar_config.ssh.private_key_path = CONFIG_SSH_KEY
+    oscar_config.ssh.username = CONFIG_SSH_USER
+    oscar_config.ssh.pty = CONFIG_SSH_PTY
+    oscar_config.vm.synced_folder ".", "/vagrant", disabled: true
+    oscar_config.vm.provision "ansible" do |ansible|
+      ansible.playbook = ""
+      ansible.vault_password_file = ""
+    end
+    oscar_config.vm.provider :vsphere do |vsphere|
+      vsphere.host                  = VSPHERE_HOST
+      vsphere.name                  = OSCAR_VAGRANT_INSTANCE_NAME
+      vsphere.data_center_name      = VSPHERE_DC
+      vsphere.compute_resource_name = VSPHERE_COMPUTE_CLUSTER
+      vsphere.data_store_name       = VSPHERE_DATASTORE
+      vsphere.resource_pool_name    = VSPHERE_RESOURCE_POOL
+      vsphere.template_name         = VSPHERE_TEMPLATE
+      vsphere.customization_spec_name = VSPHERE_SPEC
+      vsphere.vm_base_path          = VSPHERE_PATH
+      vsphere.cpu_count             = VSPHERE_CPU
+      vsphere.memory_mb             = VSPHERE_MEM
+
+      vsphere.user     = VSPHERE_USER
+      vsphere.password = VSPHERE_PASS
+      vsphere.insecure = VSPHERE_INSECURE
+     end
+  end
+end

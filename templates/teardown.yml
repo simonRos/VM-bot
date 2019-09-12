@@ -1,0 +1,7 @@
+---
+        - hosts: all
+          user:  
+          sudo: yes
+          gather_facts: no
+          roles: 
+                - { role: teardown, tags: 'teardown' }
